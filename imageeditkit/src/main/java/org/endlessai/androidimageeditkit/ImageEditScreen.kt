@@ -85,6 +85,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -230,7 +231,11 @@ internal fun ImageEditScreen(
         pendingFileBitmap = null
 
         if (uri == null || bitmap == null) {
-            Toast.makeText(context, "已取消导出到文件", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.image_edit_toast_export_file_cancelled),
+                Toast.LENGTH_SHORT
+            ).show()
             return@rememberLauncherForActivityResult
         }
 
@@ -241,9 +246,17 @@ internal fun ImageEditScreen(
             }
             isExporting = false
             if (saved) {
-                Toast.makeText(context, "已导出到文件", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.image_edit_toast_export_file_success),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                Toast.makeText(context, "文件导出失败", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.image_edit_toast_export_file_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -275,7 +288,11 @@ internal fun ImageEditScreen(
         }
 
         if (bitmap == null) {
-            Toast.makeText(context, "图片加载失败，请重新选择", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.image_edit_toast_load_failed),
+                Toast.LENGTH_SHORT
+            ).show()
             workingBitmap = null
             cropRectOnBitmap = null
         } else {
@@ -303,7 +320,11 @@ internal fun ImageEditScreen(
         val bitmap = workingBitmap
         val cropRect = cropRectOnBitmap
         if (bitmap == null || cropRect == null) {
-            Toast.makeText(context, "请先添加图片", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.image_edit_toast_add_image_first),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
         block(bitmap, cropRect)
@@ -352,7 +373,11 @@ internal fun ImageEditScreen(
                         }
                         isExporting = false
                         if (result == null) {
-                            Toast.makeText(context, "导出失败", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.image_edit_toast_export_failed),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
                             onConfirm(result)
                         }
@@ -376,9 +401,17 @@ internal fun ImageEditScreen(
                         }
                         isExporting = false
                         if (savedUri == null) {
-                            Toast.makeText(context, "保存失败，请检查相册权限", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.image_edit_toast_save_gallery_failed),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
-                            Toast.makeText(context, "已保存到相册", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.image_edit_toast_saved_gallery_success),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -516,7 +549,11 @@ internal fun ImageEditScreen(
 
                         if (editedBitmap == null) {
                             isExporting = false
-                            Toast.makeText(context, "导出失败", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.image_edit_toast_export_failed),
+                                Toast.LENGTH_SHORT
+                            ).show()
                             return@launch
                         }
 
@@ -527,9 +564,17 @@ internal fun ImageEditScreen(
                                 }
                                 isExporting = false
                                 if (uri == null) {
-                                    Toast.makeText(context, "保存到相册失败", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.image_edit_toast_export_gallery_failed),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
-                                    Toast.makeText(context, "已导出到相册", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.image_edit_toast_exported_gallery_success),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
 
@@ -570,21 +615,21 @@ private fun TopActionBar(
             IconButton(onClick = onConfirm) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircleOutline,
-                    contentDescription = "确认",
+                    contentDescription = stringResource(R.string.image_edit_cd_confirm),
                     tint = EditorUiColors.Primary
                 )
             }
             IconButton(onClick = onSave) {
                 Icon(
                     imageVector = Icons.Filled.Download,
-                    contentDescription = "保存",
+                    contentDescription = stringResource(R.string.image_edit_cd_save),
                     tint = EditorUiColors.Primary
                 )
             }
             IconButton(onClick = onCustomExport) {
                 Icon(
                     imageVector = Icons.Filled.Share,
-                    contentDescription = "自定义导出",
+                    contentDescription = stringResource(R.string.image_edit_cd_custom_export),
                     tint = EditorUiColors.Primary
                 )
             }
@@ -594,7 +639,7 @@ private fun TopActionBar(
             IconButton(onClick = onAddImageMenuToggle) {
                 Icon(
                     imageVector = Icons.Filled.AddCircleOutline,
-                    contentDescription = "添加图片",
+                    contentDescription = stringResource(R.string.image_edit_cd_add_image),
                     tint = EditorUiColors.Primary
                 )
             }
@@ -604,11 +649,11 @@ private fun TopActionBar(
                 onDismissRequest = onAddImageMenuDismiss
             ) {
                 DropdownMenuItem(
-                    text = { Text("从相册导入") },
+                    text = { Text(stringResource(R.string.image_edit_import_from_gallery)) },
                     onClick = onAddFromGallery
                 )
                 DropdownMenuItem(
-                    text = { Text("从文件夹导入") },
+                    text = { Text(stringResource(R.string.image_edit_import_from_folder)) },
                     onClick = onAddFromFiles
                 )
             }
@@ -637,7 +682,7 @@ private fun BottomActionBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextButton(onClick = onCancel) {
-            Text(text = "取消", color = EditorUiColors.SecondaryText)
+            Text(text = stringResource(R.string.image_edit_action_cancel), color = EditorUiColors.SecondaryText)
         }
 
         Row(
@@ -648,7 +693,7 @@ private fun BottomActionBar(
                 TextButton(onClick = onAspectRatioMenuToggle) {
                     Icon(
                         imageVector = Icons.Filled.CropFree,
-                        contentDescription = "比例菜单",
+                        contentDescription = stringResource(R.string.image_edit_cd_ratio_menu),
                         tint = EditorUiColors.Primary
                     )
                     Spacer(modifier = Modifier.width(4.dp))
@@ -675,14 +720,14 @@ private fun BottomActionBar(
             IconButton(onClick = onRotate) {
                 Icon(
                     imageVector = Icons.Filled.CropRotate,
-                    contentDescription = "旋转",
+                    contentDescription = stringResource(R.string.image_edit_cd_rotate),
                     tint = EditorUiColors.Primary
                 )
             }
             IconButton(onClick = onFlipHorizontally) {
                 Icon(
                     imageVector = Icons.Filled.SwapHoriz,
-                    contentDescription = "水平翻转",
+                    contentDescription = stringResource(R.string.image_edit_cd_flip_horizontal),
                     tint = EditorUiColors.Primary
                 )
             }
@@ -703,13 +748,17 @@ private fun EmptyWorkspace(
             IconButton(onClick = onAddImage, enabled = !isLoadingImage) {
                 Icon(
                     imageVector = Icons.Filled.BlurOn,
-                    contentDescription = "添加图片",
+                    contentDescription = stringResource(R.string.image_edit_cd_add_image),
                     modifier = Modifier.size(44.dp),
                     tint = EditorUiColors.Primary
                 )
             }
             Text(
-                text = if (isLoadingImage) "图片加载中..." else "操作台暂无图片，点击添加图片",
+                text = if (isLoadingImage) {
+                    stringResource(R.string.image_edit_workspace_loading)
+                } else {
+                    stringResource(R.string.image_edit_workspace_empty)
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 color = EditorUiColors.SecondaryText
             )
@@ -931,7 +980,7 @@ private fun ExportSettingsDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = "精确导出")
+            Text(text = stringResource(R.string.image_edit_dialog_precise_export))
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -942,7 +991,7 @@ private fun ExportSettingsDialog(
                         widthText = value.filter { it.isDigit() }
                     },
                     label = {
-                        Text(text = "宽度")
+                        Text(text = stringResource(R.string.image_edit_label_width))
                     },
                     singleLine = true
                 )
@@ -954,12 +1003,12 @@ private fun ExportSettingsDialog(
                         heightText = value.filter { it.isDigit() }
                     },
                     label = {
-                        Text(text = "高度")
+                        Text(text = stringResource(R.string.image_edit_label_height))
                     },
                     singleLine = true
                 )
 
-                Text(text = "对齐方式")
+                Text(text = stringResource(R.string.image_edit_label_alignment))
                 AlignmentGridSelector(
                     selectedHorizontal = horizontalAlignment,
                     selectedVertical = verticalAlignment,
@@ -969,13 +1018,13 @@ private fun ExportSettingsDialog(
                     }
                 )
 
-                Text(text = "导出位置")
+                Text(text = stringResource(R.string.image_edit_label_export_destination))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     ExportDestinationButton(
-                        label = "相册",
+                        label = stringResource(R.string.image_edit_destination_gallery),
                         selected = exportDestination == ExportDestination.GALLERY,
                         onClick = {
                             exportDestination = ExportDestination.GALLERY
@@ -983,7 +1032,7 @@ private fun ExportSettingsDialog(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     ExportDestinationButton(
-                        label = "文件夹",
+                        label = stringResource(R.string.image_edit_destination_folder),
                         selected = exportDestination == ExportDestination.FILE,
                         onClick = {
                             exportDestination = ExportDestination.FILE
@@ -1008,12 +1057,12 @@ private fun ExportSettingsDialog(
                     )
                 }
             ) {
-                Text(text = "确定导出")
+                Text(text = stringResource(R.string.image_edit_action_confirm_export))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "取消")
+                Text(text = stringResource(R.string.image_edit_action_cancel))
             }
         }
     )

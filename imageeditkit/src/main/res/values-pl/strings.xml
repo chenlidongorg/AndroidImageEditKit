@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="image_edit_kit_name">AndroidImageEditKit</string>
+    <string name="image_edit_toast_export_file_cancelled">Eksport do pliku anulowany</string>
+    <string name="image_edit_toast_export_file_success">Wyeksportowano do pliku</string>
+    <string name="image_edit_toast_export_file_failed">Eksport pliku nie powiódł się</string>
+    <string name="image_edit_toast_load_failed">Nie udało się załadować obrazu. Wybierz ponownie</string>
+    <string name="image_edit_toast_add_image_first">Najpierw dodaj zdjęcie</string>
+    <string name="image_edit_toast_export_failed">Eksport nie powiódł się</string>
+    <string name="image_edit_toast_save_gallery_failed">Zapisywanie nie powiodło się. Sprawdź uprawnienia galerii</string>
+    <string name="image_edit_toast_saved_gallery_success">Zapisano w galerii</string>
+    <string name="image_edit_toast_export_gallery_failed">Nie udało się zapisać w galerii</string>
+    <string name="image_edit_toast_exported_gallery_success">Wyeksportowano do galerii</string>
+    <string name="image_edit_cd_confirm">Potwierdź</string>
+    <string name="image_edit_cd_save">Zapisz</string>
+    <string name="image_edit_cd_custom_export">Precyzyjny eksport</string>
+    <string name="image_edit_cd_add_image">Dodaj obraz</string>
+    <string name="image_edit_cd_ratio_menu">Menu proporcji</string>
+    <string name="image_edit_cd_rotate">Obróć</string>
+    <string name="image_edit_cd_flip_horizontal">Odwróć poziomo</string>
+    <string name="image_edit_import_from_gallery">Importuj z galerii</string>
+    <string name="image_edit_import_from_folder">Importuj z folderu</string>
+    <string name="image_edit_action_cancel">Anuluj</string>
+    <string name="image_edit_workspace_loading">Ładowanie obrazu…</string>
+    <string name="image_edit_workspace_empty">Brak obrazu w obszarze roboczym. Kliknij, aby go dodać</string>
+    <string name="image_edit_dialog_precise_export">Precyzyjny eksport</string>
+    <string name="image_edit_label_width">Szerokość</string>
+    <string name="image_edit_label_height">Wysokość</string>
+    <string name="image_edit_label_alignment">Wyrównanie</string>
+    <string name="image_edit_label_export_destination">Miejsce docelowe eksportu</string>
+    <string name="image_edit_destination_gallery">Galeria</string>
+    <string name="image_edit_destination_folder">Folder</string>
+    <string name="image_edit_action_confirm_export">Eksportuj</string>
+</resources>

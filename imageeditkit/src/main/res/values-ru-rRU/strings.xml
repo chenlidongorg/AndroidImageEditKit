@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="image_edit_kit_name">AndroidImageEditKit</string>
+    <string name="image_edit_toast_export_file_cancelled">Экспорт в файл отменен</string>
+    <string name="image_edit_toast_export_file_success">Экспортировано в файл</string>
+    <string name="image_edit_toast_export_file_failed">Экспорт файла не удался</string>
+    <string name="image_edit_toast_load_failed">Не удалось загрузить изображение. Выберите еще раз.</string>
+    <string name="image_edit_toast_add_image_first">Пожалуйста, сначала добавьте изображение</string>
+    <string name="image_edit_toast_export_failed">Экспорт не удался</string>
+    <string name="image_edit_toast_save_gallery_failed">Не удалось сохранить. Проверьте разрешение галереи.</string>
+    <string name="image_edit_toast_saved_gallery_success">Сохранено в галерее.</string>
+    <string name="image_edit_toast_export_gallery_failed">Не удалось сохранить в галерее</string>
+    <string name="image_edit_toast_exported_gallery_success">Экспортировано в галерею.</string>
+    <string name="image_edit_cd_confirm">Подтвердить</string>
+    <string name="image_edit_cd_save">Сохранить</string>
+    <string name="image_edit_cd_custom_export">Точный экспорт</string>
+    <string name="image_edit_cd_add_image">Добавить изображение</string>
+    <string name="image_edit_cd_ratio_menu">Меню соотношения</string>
+    <string name="image_edit_cd_rotate">Поворот</string>
+    <string name="image_edit_cd_flip_horizontal">Перевернуть по горизонтали</string>
+    <string name="image_edit_import_from_gallery">Импорт из галереи</string>
+    <string name="image_edit_import_from_folder">Импортировать из папки</string>
+    <string name="image_edit_action_cancel">Отмена</string>
+    <string name="image_edit_workspace_loading">Загрузка изображения…</string>
+    <string name="image_edit_workspace_empty">В рабочей области нет изображения. Нажмите, чтобы добавить его.</string>
+    <string name="image_edit_dialog_precise_export">Точный экспорт</string>
+    <string name="image_edit_label_width">Ширина</string>
+    <string name="image_edit_label_height">Высота</string>
+    <string name="image_edit_label_alignment">Выравнивание</string>
+    <string name="image_edit_label_export_destination">Назначение экспорта</string>
+    <string name="image_edit_destination_gallery">Галерея</string>
+    <string name="image_edit_destination_folder">Папка</string>
+    <string name="image_edit_action_confirm_export">Экспорт</string>
+</resources>

@@ -11,7 +11,6 @@
     <string name="image_edit_toast_saved_gallery_success">Saved to gallery</string>
     <string name="image_edit_toast_export_gallery_failed">Failed to save to gallery</string>
     <string name="image_edit_toast_exported_gallery_success">Exported to gallery</string>
-
     <string name="image_edit_cd_confirm">Confirm</string>
     <string name="image_edit_cd_save">Save</string>
     <string name="image_edit_cd_custom_export">Precise export</string>
@@ -19,13 +18,11 @@
     <string name="image_edit_cd_ratio_menu">Ratio menu</string>
     <string name="image_edit_cd_rotate">Rotate</string>
     <string name="image_edit_cd_flip_horizontal">Flip horizontally</string>
-
     <string name="image_edit_import_from_gallery">Import from gallery</string>
     <string name="image_edit_import_from_folder">Import from folder</string>
     <string name="image_edit_action_cancel">Cancel</string>
     <string name="image_edit_workspace_loading">Loading image…</string>
     <string name="image_edit_workspace_empty">No image on workspace, tap to add one</string>
-
     <string name="image_edit_dialog_precise_export">Precise Export</string>
     <string name="image_edit_label_width">Width</string>
     <string name="image_edit_label_height">Height</string>

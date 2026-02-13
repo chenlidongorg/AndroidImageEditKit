@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="image_edit_kit_name">AndroidImageEditKit</string>
+    <string name="image_edit_toast_export_file_cancelled">Vienti tiedostoon peruutettu</string>
+    <string name="image_edit_toast_export_file_success">Vietiin tiedostoon</string>
+    <string name="image_edit_toast_export_file_failed">Tiedoston vienti epäonnistui</string>
+    <string name="image_edit_toast_load_failed">Kuvan lataaminen epäonnistui, valitse uudelleen</string>
+    <string name="image_edit_toast_add_image_first">Lisää ensin kuva</string>
+    <string name="image_edit_toast_export_failed">Vienti epäonnistui</string>
+    <string name="image_edit_toast_save_gallery_failed">Tallennus epäonnistui, tarkista gallerian käyttöoikeudet</string>
+    <string name="image_edit_toast_saved_gallery_success">Tallennettu galleriaan</string>
+    <string name="image_edit_toast_export_gallery_failed">Tallentaminen galleriaan epäonnistui</string>
+    <string name="image_edit_toast_exported_gallery_success">Viedään galleriaan</string>
+    <string name="image_edit_cd_confirm">Vahvista</string>
+    <string name="image_edit_cd_save">Tallenna</string>
+    <string name="image_edit_cd_custom_export">Tarkka vienti</string>
+    <string name="image_edit_cd_add_image">Lisää kuva</string>
+    <string name="image_edit_cd_ratio_menu">Suhdevalikko</string>
+    <string name="image_edit_cd_rotate">Kierrä</string>
+    <string name="image_edit_cd_flip_horizontal">Käännä vaakasuoraan</string>
+    <string name="image_edit_import_from_gallery">Tuo galleriasta</string>
+    <string name="image_edit_import_from_folder">Tuo kansiosta</string>
+    <string name="image_edit_action_cancel">Peruuta</string>
+    <string name="image_edit_workspace_loading">Ladataan kuvaa…</string>
+    <string name="image_edit_workspace_empty">Työtilassa ei ole kuvaa, lisää kuva napauttamalla</string>
+    <string name="image_edit_dialog_precise_export">Tarkka vienti</string>
+    <string name="image_edit_label_width">Leveys</string>
+    <string name="image_edit_label_height">Korkeus</string>
+    <string name="image_edit_label_alignment">Tasaus</string>
+    <string name="image_edit_label_export_destination">Vie määränpää</string>
+    <string name="image_edit_destination_gallery">Galleria</string>
+    <string name="image_edit_destination_folder">Kansio</string>
+    <string name="image_edit_action_confirm_export">Vie</string>
+</resources>

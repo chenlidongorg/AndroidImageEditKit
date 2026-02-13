@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="image_edit_kit_name">AndroidImageEditKit</string>
+    <string name="image_edit_toast_export_file_cancelled">已取消导出到文件</string>
+    <string name="image_edit_toast_export_file_success">已导出到文件</string>
+    <string name="image_edit_toast_export_file_failed">文件导出失败</string>
+    <string name="image_edit_toast_load_failed">图片加载失败，请重新选择</string>
+    <string name="image_edit_toast_add_image_first">请先添加图片</string>
+    <string name="image_edit_toast_export_failed">导出失败</string>
+    <string name="image_edit_toast_save_gallery_failed">保存失败，请检查相册权限</string>
+    <string name="image_edit_toast_saved_gallery_success">已保存到相册</string>
+    <string name="image_edit_toast_export_gallery_failed">保存到相册失败</string>
+    <string name="image_edit_toast_exported_gallery_success">已导出到相册</string>
+    <string name="image_edit_cd_confirm">确认</string>
+    <string name="image_edit_cd_save">保存</string>
+    <string name="image_edit_cd_custom_export">精确导出</string>
+    <string name="image_edit_cd_add_image">添加图片</string>
+    <string name="image_edit_cd_ratio_menu">比例菜单</string>
+    <string name="image_edit_cd_rotate">旋转</string>
+    <string name="image_edit_cd_flip_horizontal">水平翻转</string>
+    <string name="image_edit_import_from_gallery">从相册导入</string>
+    <string name="image_edit_import_from_folder">从文件夹导入</string>
+    <string name="image_edit_action_cancel">取消</string>
+    <string name="image_edit_workspace_loading">图片加载中…</string>
+    <string name="image_edit_workspace_empty">操作台暂无图片，点击添加图片</string>
+    <string name="image_edit_dialog_precise_export">精确导出</string>
+    <string name="image_edit_label_width">宽度</string>
+    <string name="image_edit_label_height">高度</string>
+    <string name="image_edit_label_alignment">对齐方式</string>
+    <string name="image_edit_label_export_destination">导出位置</string>
+    <string name="image_edit_destination_gallery">相册</string>
+    <string name="image_edit_destination_folder">文件夹</string>
+    <string name="image_edit_action_confirm_export">确定导出</string>
+</resources>
