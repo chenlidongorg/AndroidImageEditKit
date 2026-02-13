@@ -134,36 +134,6 @@ jobs:
             exit 1
           fi
 
-      - name: Validate Sonatype credentials and namespace
-        env:
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ -z "${SONATYPE_USERNAME:-}" ] || [ -z "${SONATYPE_PASSWORD:-}" ]; then
-            echo "SONATYPE credentials are empty."
-            exit 1
-          fi
-
-          status_code=$(curl -sS -u "$SONATYPE_USERNAME:$SONATYPE_PASSWORD" \
-            -o /tmp/sonatype_profiles.xml \
-            -w "%{http_code}" \
-            "https://ossrh-staging-api.central.sonatype.com/service/local/staging/profiles")
-
-          echo "sonatype_profiles_http_status=$status_code"
-          if [ "$status_code" != "200" ]; then
-            echo "Cannot access Sonatype staging profiles API with current credentials."
-            sed -n '1,80p' /tmp/sonatype_profiles.xml || true
-            exit 1
-          fi
-
-          if ! rg -q "org\\.endlessai" /tmp/sonatype_profiles.xml; then
-            echo "No staging profile matching org.endlessai found for current Sonatype account."
-            sed -n '1,120p' /tmp/sonatype_profiles.xml || true
-            exit 1
-          fi
-
       - name: Publish release artifact to Maven Central
         env:
           ORG_GRADLE_PROJECT_VERSION_NAME: ${{ steps.version.outputs.version }}
@@ -171,6 +141,7 @@ jobs:
           ORG_GRADLE_PROJECT_SONATYPE_PACKAGE_GROUP: org.endlessai
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
           ORG_GRADLE_PROJECT_SIGNING_KEY: ${{ env.SIGNING_KEY_NORMALIZED }}
           ORG_GRADLE_PROJECT_SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |

@@ -137,6 +137,10 @@ signing {
 
     val signingKeyRaw = (findProperty("SIGNING_KEY") as? String)
         ?: System.getenv("SIGNING_KEY")
+    val signingKeyId = (findProperty("SIGNING_KEY_ID") as? String)
+        ?.takeIf { it.isNotBlank() }
+        ?: System.getenv("SIGNING_KEY_ID")
+            ?.takeIf { it.isNotBlank() }
     val signingKey = signingKeyRaw
         ?.trim()
         // Support GitHub secret values pasted with escaped newlines.
@@ -145,7 +149,11 @@ signing {
         ?: System.getenv("SIGNING_PASSWORD")
 
     if (!signingKey.isNullOrBlank()) {
-        useInMemoryPgpKeys(signingKey, signingPassword)
+        if (!signingKeyId.isNullOrBlank()) {
+            useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+        } else {
+            useInMemoryPgpKeys(signingKey, signingPassword)
+        }
     }
     sign(publishing.publications)
 }
