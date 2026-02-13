@@ -16,6 +16,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -42,10 +43,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.SystemUpdateAlt
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -65,6 +66,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -125,20 +127,20 @@ private enum class ExportDestination {
 }
 
 private object EditorUiColors {
-    val ScreenBg = Color(0xFFF3F5F9)
+    val ScreenBg = Color(0xFFF5F5F5)
     val WorkspaceBg = Color(0xFFFFFFFF)
-    val WorkspaceBorder = Color(0xFFD8E0EB)
+    val WorkspaceBorder = Color(0xFFD5D5D5)
     val ToolbarSurface = Color(0xFFFFFFFF)
-    val ToolbarBorder = Color(0xFFDCE4EF)
-    val Primary = Color(0xFF2F6FED)
-    val PrimarySoft = Color(0x1F2F6FED)
-    val SecondaryText = Color(0xFF667085)
-    val CropStroke = Color(0xFF2F6FED)
+    val ToolbarBorder = Color(0xFFDBDBDB)
+    val Primary = Color(0xFF111111)
+    val PrimarySoft = Color(0x1F111111)
+    val SecondaryText = Color(0xFF5F5F5F)
+    val CropStroke = Color(0xFFFFFFFF)
     val CropGrid = Color(0xB3FFFFFF)
     val HandleFill = Color(0xFFFFFFFF)
-    val HandleStroke = Color(0xFF2F6FED)
-    val Mask = Color(0x66000000)
-    val MutedBorder = Color(0xFFBFC9D8)
+    val HandleStroke = Color(0xFF111111)
+    val Mask = Color(0x88000000)
+    val MutedBorder = Color(0xFFBEBEBE)
 }
 
 private enum class AspectRatioOption(val label: String, val ratio: Float?) {
@@ -179,6 +181,7 @@ internal fun ImageEditScreen(
 
     var aspectRatioOption by remember { mutableStateOf(AspectRatioOption.FREE) }
     var aspectRatioMenuExpanded by remember { mutableStateOf(false) }
+    var addImageMenuExpanded by remember { mutableStateOf(false) }
 
     var showCustomExportDialog by remember { mutableStateOf(false) }
     var customExportDefaultWidth by remember { mutableIntStateOf(0) }
@@ -189,6 +192,14 @@ internal fun ImageEditScreen(
     var isExporting by remember { mutableStateOf(false) }
 
     var pendingFileBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            inputUriString = uri.toString()
+        }
+    }
 
     val openDocumentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) {
@@ -271,6 +282,12 @@ internal fun ImageEditScreen(
     }
 
     fun openImagePicker() {
+        photoPickerLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
+    }
+
+    fun openDocumentPicker() {
         openDocumentLauncher.launch(arrayOf("image/*"))
     }
 
@@ -365,8 +382,20 @@ internal fun ImageEditScreen(
                     showCustomExportDialog = true
                 }
             },
-            onAddImage = {
+            addImageMenuExpanded = addImageMenuExpanded,
+            onAddImageMenuToggle = {
+                addImageMenuExpanded = true
+            },
+            onAddImageMenuDismiss = {
+                addImageMenuExpanded = false
+            },
+            onAddFromGallery = {
+                addImageMenuExpanded = false
                 openImagePicker()
+            },
+            onAddFromFiles = {
+                addImageMenuExpanded = false
+                openDocumentPicker()
             }
         )
 
@@ -390,7 +419,7 @@ internal fun ImageEditScreen(
                 EmptyWorkspace(
                     isLoadingImage = isLoadingImage,
                     onAddImage = {
-                        openImagePicker()
+                        addImageMenuExpanded = true
                     }
                 )
             } else {
@@ -448,9 +477,6 @@ internal fun ImageEditScreen(
                 )
             },
             onCancel = onCancel,
-            onAddImage = {
-                openImagePicker()
-            }
         )
     }
 
@@ -517,7 +543,11 @@ private fun TopActionBar(
     onConfirm: () -> Unit,
     onSave: () -> Unit,
     onCustomExport: () -> Unit,
-    onAddImage: () -> Unit
+    addImageMenuExpanded: Boolean,
+    onAddImageMenuToggle: () -> Unit,
+    onAddImageMenuDismiss: () -> Unit,
+    onAddFromGallery: () -> Unit,
+    onAddFromFiles: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -538,26 +568,42 @@ private fun TopActionBar(
             }
             IconButton(onClick = onSave) {
                 Icon(
-                    imageVector = Icons.Filled.Save,
+                    imageVector = Icons.Filled.SystemUpdateAlt,
                     contentDescription = "保存",
                     tint = EditorUiColors.Primary
                 )
             }
             IconButton(onClick = onCustomExport) {
                 Icon(
-                    imageVector = Icons.Filled.Settings,
+                    imageVector = Icons.Filled.Share,
                     contentDescription = "自定义导出",
                     tint = EditorUiColors.Primary
                 )
             }
         }
 
-        IconButton(onClick = onAddImage) {
-            Icon(
-                imageVector = Icons.Filled.AddPhotoAlternate,
-                contentDescription = "添加图片",
-                tint = EditorUiColors.Primary
-            )
+        Box {
+            IconButton(onClick = onAddImageMenuToggle) {
+                Icon(
+                    imageVector = Icons.Filled.AddPhotoAlternate,
+                    contentDescription = "添加图片",
+                    tint = EditorUiColors.Primary
+                )
+            }
+
+            DropdownMenu(
+                expanded = addImageMenuExpanded,
+                onDismissRequest = onAddImageMenuDismiss
+            ) {
+                DropdownMenuItem(
+                    text = { Text("从相册导入") },
+                    onClick = onAddFromGallery
+                )
+                DropdownMenuItem(
+                    text = { Text("从文件夹导入") },
+                    onClick = onAddFromFiles
+                )
+            }
         }
     }
 }
@@ -571,8 +617,7 @@ private fun BottomActionBar(
     onAspectRatioSelect: (AspectRatioOption) -> Unit,
     onRotate: () -> Unit,
     onFlipHorizontally: () -> Unit,
-    onCancel: () -> Unit,
-    onAddImage: () -> Unit
+    onCancel: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -619,13 +664,6 @@ private fun BottomActionBar(
                 }
             }
 
-            IconButton(onClick = onAddImage) {
-                Icon(
-                    imageVector = Icons.Filled.AddPhotoAlternate,
-                    contentDescription = "添加图片",
-                    tint = EditorUiColors.Primary
-                )
-            }
             IconButton(onClick = onRotate) {
                 Icon(
                     imageVector = Icons.Filled.Sync,
@@ -683,18 +721,21 @@ private fun CropWorkspace(
     if (bitmap == null || cropRectOnBitmap == null || renderInfo == null) {
         return
     }
+    val latestCropRectState = rememberUpdatedState(cropRectOnBitmap)
 
     Canvas(
         modifier = modifier
-            .pointerInput(bitmap, cropRectOnBitmap, renderInfo, aspectRatio) {
+            .pointerInput(bitmap, renderInfo, aspectRatio) {
                 var activeHandle = DragHandle.NONE
+                var dragRect = RectF(latestCropRectState.value)
                 detectDragGestures(
                     onDragStart = { startOffset ->
-                        val cropOnScreen = bitmapToScreen(cropRectOnBitmap, renderInfo)
+                        dragRect = RectF(latestCropRectState.value)
+                        val cropOnScreen = bitmapToScreen(dragRect, renderInfo)
                         activeHandle = resolveDragHandle(
                             pointer = startOffset,
                             cropRectOnScreen = cropOnScreen,
-                            touchRadiusPx = 36f
+                            touchRadiusPx = 40f
                         )
                     },
                     onDragEnd = {
@@ -708,8 +749,8 @@ private fun CropWorkspace(
                         if (activeHandle == DragHandle.NONE) {
                             return@detectDragGestures
                         }
-                        val updated = updateCropRectByDrag(
-                            current = cropRectOnBitmap,
+                        dragRect = updateCropRectByDrag(
+                            current = dragRect,
                             dragHandle = activeHandle,
                             deltaX = dragAmount.x / renderInfo.scale,
                             deltaY = dragAmount.y / renderInfo.scale,
@@ -718,7 +759,7 @@ private fun CropWorkspace(
                             minSize = 64f,
                             aspectRatio = aspectRatio
                         )
-                        onCropRectChange(updated)
+                        onCropRectChange(dragRect)
                     }
                 )
             }
