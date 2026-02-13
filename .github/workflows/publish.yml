@@ -109,6 +109,31 @@ jobs:
               f.write("EOF\n")
           PY
 
+      - name: Validate signing key and password pair
+        env:
+          SIGNING_KEY_NORMALIZED: ${{ env.SIGNING_KEY_NORMALIZED }}
+          SIGNING_PASSWORD_RAW: ${{ secrets.SIGNING_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TMP_GNUPG="$(mktemp -d)"
+          trap 'rm -rf "$TMP_GNUPG"' EXIT
+          chmod 700 "$TMP_GNUPG"
+
+          printf '%s\n' "$SIGNING_KEY_NORMALIZED" > "$TMP_GNUPG/private.asc"
+          gpg --batch --quiet --homedir "$TMP_GNUPG" --import "$TMP_GNUPG/private.asc"
+
+          KEY_ID="$(gpg --batch --homedir "$TMP_GNUPG" --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')"
+          if [ -z "$KEY_ID" ]; then
+            echo "No secret key found after import."
+            exit 1
+          fi
+
+          if ! printf 'sign-test' | gpg --batch --yes --quiet --homedir "$TMP_GNUPG" --pinentry-mode loopback --passphrase "$SIGNING_PASSWORD_RAW" --local-user "$KEY_ID" --clearsign > /dev/null; then
+            echo "SIGNING_PASSWORD does not match SIGNING_KEY, or SIGNING_KEY is unreadable for signing."
+            exit 1
+          fi
+
       - name: Publish release artifact to Maven Central
         env:
           ORG_GRADLE_PROJECT_VERSION_NAME: ${{ steps.version.outputs.version }}
