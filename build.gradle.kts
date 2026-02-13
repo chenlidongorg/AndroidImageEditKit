@@ -4,6 +4,9 @@ plugins {
     id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 }
 
+group = (findProperty("GROUP") as? String) ?: "org.endlessai.androidimageeditkit"
+version = (findProperty("VERSION_NAME") as? String) ?: "0.1.0"
+
 nexusPublishing {
     repositories {
         sonatype {
