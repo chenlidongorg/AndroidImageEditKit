@@ -21,6 +21,39 @@ Android 图片编辑库（裁剪场景），支持：
 ./gradlew :imageeditkit:assembleDebug
 ```
 
+## 发布包（GitHub Packages）
+
+本库默认 Maven 坐标：
+
+- `groupId`: `org.endlessai.androidimageeditkit`
+- `artifactId`: `imageeditkit`
+
+发布方式：
+
+1. 提交并 push 代码到仓库
+2. 创建并 push tag（例如 `v0.1.1`）
+3. GitHub Actions 会自动执行 `.github/workflows/publish.yml`，发布到 GitHub Packages
+
+```bash
+git tag v0.1.1
+git push origin v0.1.1
+```
+
+发布后客户端依赖：
+
+```kotlin
+implementation("org.endlessai.androidimageeditkit:imageeditkit:0.1.1")
+```
+
+说明：
+
+- 代码包名与 Maven 坐标统一为 `org.endlessai.androidimageeditkit`。
+- 若需要本地手动发布，可执行：
+
+```bash
+./gradlew :imageeditkit:publishReleasePublicationToGitHubPackagesRepository
+```
+
 ## 对外 API
 
 ### 1) 直接启动
