@@ -4,10 +4,11 @@ plugins {
     id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 }
 
-group = (findProperty("GROUP") as? String) ?: "org.endlessai.androidimageeditkit"
-version = (findProperty("VERSION_NAME") as? String) ?: "0.1.0"
-val sonatypePackageGroup = (findProperty("SONATYPE_PACKAGE_GROUP") as? String)
-    ?: group.toString()
+fun propOrNull(name: String): String? = (findProperty(name) as? String)?.takeIf { it.isNotBlank() }
+
+group = propOrNull("GROUP") ?: "org.endlessai.androidimageeditkit"
+version = propOrNull("VERSION_NAME") ?: "0.1.0"
+val sonatypePackageGroup = propOrNull("SONATYPE_PACKAGE_GROUP") ?: "org.endlessai"
 
 nexusPublishing {
     repositories {
@@ -15,25 +16,25 @@ nexusPublishing {
             packageGroup.set(sonatypePackageGroup)
             nexusUrl.set(
                 uri(
-                    (findProperty("SONATYPE_NEXUS_URL") as? String)
+                    propOrNull("SONATYPE_NEXUS_URL")
                         ?: "https://ossrh-staging-api.central.sonatype.com/service/local/"
                 )
             )
             snapshotRepositoryUrl.set(
                 uri(
-                    (findProperty("SONATYPE_SNAPSHOT_URL") as? String)
+                    propOrNull("SONATYPE_SNAPSHOT_URL")
                         ?: "https://central.sonatype.com/repository/maven-snapshots/"
                 )
             )
             username.set(
-                (findProperty("sonatypeUsername") as? String)
-                    ?: (findProperty("OSSRH_USERNAME") as? String)
+                propOrNull("sonatypeUsername")
+                    ?: propOrNull("OSSRH_USERNAME")
                     ?: System.getenv("SONATYPE_USERNAME")
                     ?: System.getenv("OSSRH_USERNAME")
             )
             password.set(
-                (findProperty("sonatypePassword") as? String)
-                    ?: (findProperty("OSSRH_PASSWORD") as? String)
+                propOrNull("sonatypePassword")
+                    ?: propOrNull("OSSRH_PASSWORD")
                     ?: System.getenv("SONATYPE_PASSWORD")
                     ?: System.getenv("OSSRH_PASSWORD")
             )
