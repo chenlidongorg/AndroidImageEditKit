@@ -135,8 +135,12 @@ signing {
     }
     setRequired { shouldSignForCentral }
 
-    val signingKey = (findProperty("SIGNING_KEY") as? String)
+    val signingKeyRaw = (findProperty("SIGNING_KEY") as? String)
         ?: System.getenv("SIGNING_KEY")
+    val signingKey = signingKeyRaw
+        ?.trim()
+        // Support GitHub secret values pasted with escaped newlines.
+        ?.replace("\\n", "\n")
     val signingPassword = (findProperty("SIGNING_PASSWORD") as? String)
         ?: System.getenv("SIGNING_PASSWORD")
 
