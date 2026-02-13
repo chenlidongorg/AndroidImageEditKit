@@ -50,6 +50,65 @@ jobs:
             exit 1
           fi
 
+      - name: Prepare signing key
+        env:
+          SIGNING_KEY_RAW: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD_RAW: ${{ secrets.SIGNING_PASSWORD }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64
+          import os
+          import sys
+
+          raw = os.getenv("SIGNING_KEY_RAW", "")
+          signing_password = os.getenv("SIGNING_PASSWORD_RAW", "")
+
+          if not raw.strip():
+              print("SIGNING_KEY is empty.")
+              sys.exit(1)
+          if not signing_password:
+              print("SIGNING_PASSWORD is empty.")
+              sys.exit(1)
+
+          candidates = [raw, raw.replace("\\n", "\n")]
+
+          for c in list(candidates):
+              s = c.strip().strip('"').strip("'").replace("\r", "")
+              if s and s not in candidates:
+                  candidates.append(s)
+
+          for c in list(candidates):
+              try:
+                  decoded = base64.b64decode(c.strip(), validate=True).decode("utf-8", errors="ignore")
+              except Exception:
+                  continue
+              for variant in (decoded, decoded.replace("\\n", "\n")):
+                  v = variant.strip().replace("\r", "")
+                  if v and v not in candidates:
+                      candidates.append(v)
+
+          key = None
+          for c in candidates:
+              s = c.strip().replace("\r", "")
+              if "BEGIN PGP PRIVATE KEY BLOCK" in s and "END PGP PRIVATE KEY BLOCK" in s:
+                  key = s
+                  break
+
+          if key is None:
+              print("Could not normalize SIGNING_KEY to an armored private key block.")
+              print(f"raw_length={len(raw)} contains_begin={'BEGIN PGP PRIVATE KEY BLOCK' in raw}")
+              sys.exit(1)
+
+          print(f"SIGNING_KEY normalized, lines={len(key.splitlines())}")
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as f:
+              f.write("SIGNING_KEY_NORMALIZED<<EOF\n")
+              f.write(key)
+              if not key.endswith("\n"):
+                  f.write("\n")
+              f.write("EOF\n")
+          PY
+
       - name: Publish release artifact to Maven Central
         env:
           ORG_GRADLE_PROJECT_VERSION_NAME: ${{ steps.version.outputs.version }}
@@ -57,7 +116,7 @@ jobs:
           ORG_GRADLE_PROJECT_SONATYPE_PACKAGE_GROUP: org.endlessai
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
-          ORG_GRADLE_PROJECT_SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_SIGNING_KEY: ${{ env.SIGNING_KEY_NORMALIZED }}
           ORG_GRADLE_PROJECT_SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
           ./gradlew \
