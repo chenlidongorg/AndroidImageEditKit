@@ -40,9 +40,15 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.AspectRatio
+import androidx.compose.material.icons.filled.BlurOn
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircleOutline
+import androidx.compose.material.icons.filled.CropFree
+import androidx.compose.material.icons.filled.CropRotate
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Sync
@@ -51,7 +57,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -79,6 +84,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -141,6 +147,8 @@ private object EditorUiColors {
     val HandleStroke = Color(0xFF111111)
     val Mask = Color(0x88000000)
     val MutedBorder = Color(0xFFBEBEBE)
+    val SelectionGreen = Color(0xFF1EA954)
+    val SelectionGreenBorder = Color(0xFF14833E)
 }
 
 private enum class AspectRatioOption(val label: String, val ratio: Float?) {
@@ -561,14 +569,14 @@ private fun TopActionBar(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             IconButton(onClick = onConfirm) {
                 Icon(
-                    imageVector = Icons.Filled.Check,
+                    imageVector = Icons.Filled.CheckCircleOutline,
                     contentDescription = "确认",
                     tint = EditorUiColors.Primary
                 )
             }
             IconButton(onClick = onSave) {
                 Icon(
-                    imageVector = Icons.Filled.SystemUpdateAlt,
+                    imageVector = Icons.Filled.Download,
                     contentDescription = "保存",
                     tint = EditorUiColors.Primary
                 )
@@ -585,7 +593,7 @@ private fun TopActionBar(
         Box {
             IconButton(onClick = onAddImageMenuToggle) {
                 Icon(
-                    imageVector = Icons.Filled.AddPhotoAlternate,
+                    imageVector = Icons.Filled.AddCircleOutline,
                     contentDescription = "添加图片",
                     tint = EditorUiColors.Primary
                 )
@@ -639,7 +647,7 @@ private fun BottomActionBar(
             Box {
                 TextButton(onClick = onAspectRatioMenuToggle) {
                     Icon(
-                        imageVector = Icons.Filled.AspectRatio,
+                        imageVector = Icons.Filled.CropFree,
                         contentDescription = "比例菜单",
                         tint = EditorUiColors.Primary
                     )
@@ -666,7 +674,7 @@ private fun BottomActionBar(
 
             IconButton(onClick = onRotate) {
                 Icon(
-                    imageVector = Icons.Filled.Sync,
+                    imageVector = Icons.Filled.CropRotate,
                     contentDescription = "旋转",
                     tint = EditorUiColors.Primary
                 )
@@ -694,7 +702,7 @@ private fun EmptyWorkspace(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             IconButton(onClick = onAddImage, enabled = !isLoadingImage) {
                 Icon(
-                    imageVector = Icons.Filled.AddPhotoAlternate,
+                    imageVector = Icons.Filled.BlurOn,
                     contentDescription = "添加图片",
                     modifier = Modifier.size(44.dp),
                     tint = EditorUiColors.Primary
@@ -722,6 +730,9 @@ private fun CropWorkspace(
         return
     }
     val latestCropRectState = rememberUpdatedState(cropRectOnBitmap)
+    val density = LocalDensity.current
+    val touchRadiusPx = with(density) { 28.dp.toPx() }
+    val handleRadiusPx = with(density) { 9.dp.toPx() }
 
     Canvas(
         modifier = modifier
@@ -735,7 +746,7 @@ private fun CropWorkspace(
                         activeHandle = resolveDragHandle(
                             pointer = startOffset,
                             cropRectOnScreen = cropOnScreen,
-                            touchRadiusPx = 40f
+                            touchRadiusPx = touchRadiusPx
                         )
                     },
                     onDragEnd = {
@@ -818,7 +829,7 @@ private fun CropWorkspace(
             cap = StrokeCap.Round
         )
 
-        drawHandles(cropRect)
+        drawHandles(cropRect, handleRadiusPx)
     }
 }
 
@@ -865,8 +876,10 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawOutsideMask(
     }
 }
 
-private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawHandles(cropRect: RectF) {
-    val handleRadius = 8.5f
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawHandles(
+    cropRect: RectF,
+    handleRadius: Float
+) {
     val points = listOf(
         Offset(cropRect.left, cropRect.top),
         Offset(cropRect.right, cropRect.top),
@@ -888,7 +901,7 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawHandles(cropRec
             color = EditorUiColors.HandleStroke,
             radius = handleRadius,
             center = point,
-            style = Stroke(width = 2f)
+            style = Stroke(width = max(2f, handleRadius * 0.22f))
         )
     }
 }
@@ -946,12 +959,6 @@ private fun ExportSettingsDialog(
                     singleLine = true
                 )
 
-                Text(
-                    text = "默认值 = 当前裁剪区域大小",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF757575)
-                )
-
                 Text(text = "对齐方式")
                 AlignmentGridSelector(
                     selectedHorizontal = horizontalAlignment,
@@ -963,23 +970,23 @@ private fun ExportSettingsDialog(
                 )
 
                 Text(text = "导出位置")
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    ExportDestinationButton(
+                        label = "相册",
                         selected = exportDestination == ExportDestination.GALLERY,
                         onClick = {
                             exportDestination = ExportDestination.GALLERY
-                        },
-                        label = {
-                            Text("相册")
                         }
                     )
-                    FilterChip(
+                    Spacer(modifier = Modifier.width(10.dp))
+                    ExportDestinationButton(
+                        label = "文件夹",
                         selected = exportDestination == ExportDestination.FILE,
                         onClick = {
                             exportDestination = ExportDestination.FILE
-                        },
-                        label = {
-                            Text("文件夹")
                         }
                     )
                 }
@@ -1029,7 +1036,11 @@ private fun AlignmentGridSelector(
         HorizontalAlignment.END
     )
 
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         rows.forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 cols.forEach { col ->
@@ -1039,11 +1050,11 @@ private fun AlignmentGridSelector(
                             .size(24.dp)
                             .border(
                                 width = 1.5.dp,
-                                color = if (selected) EditorUiColors.Primary else EditorUiColors.MutedBorder,
+                                color = if (selected) EditorUiColors.SelectionGreenBorder else EditorUiColors.MutedBorder,
                                 shape = RoundedCornerShape(4.dp)
                             )
                             .background(
-                                color = if (selected) EditorUiColors.PrimarySoft else Color.Transparent,
+                                color = if (selected) EditorUiColors.SelectionGreen else Color.Transparent,
                                 shape = RoundedCornerShape(4.dp)
                             )
                             .clickable {
@@ -1053,6 +1064,34 @@ private fun AlignmentGridSelector(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ExportDestinationButton(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .background(
+                color = if (selected) EditorUiColors.SelectionGreen else Color.Transparent,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .border(
+                width = 1.5.dp,
+                color = if (selected) EditorUiColors.SelectionGreenBorder else EditorUiColors.MutedBorder,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = label,
+            color = if (selected) Color.White else EditorUiColors.SecondaryText
+        )
     }
 }
 
@@ -1631,39 +1670,71 @@ private fun applyExportSettings(
         return croppedBitmap
     }
 
+    val sourceWidth = croppedBitmap.width.toFloat()
+    val sourceHeight = croppedBitmap.height.toFloat()
+    val targetRatio = targetWidth.toFloat() / targetHeight.toFloat()
+    val sourceRatio = sourceWidth / sourceHeight
+
+    // 先在粗裁剪结果上按“等比例铺满”计算，再依据对齐方式做二次精准裁剪。
+    val sourceCropRect = if (sourceRatio > targetRatio) {
+        val cropWidth = sourceHeight * targetRatio
+        val cropLeft = alignedOffset(
+            containerSize = sourceWidth,
+            contentSize = cropWidth,
+            alignment = exportSettings.horizontalAlignment
+        )
+        RectF(cropLeft, 0f, cropLeft + cropWidth, sourceHeight)
+    } else {
+        val cropHeight = sourceWidth / targetRatio
+        val cropTop = alignedOffset(
+            containerSize = sourceHeight,
+            contentSize = cropHeight,
+            alignment = exportSettings.verticalAlignment
+        )
+        RectF(0f, cropTop, sourceWidth, cropTop + cropHeight)
+    }
+
+    val safeLeft = sourceCropRect.left.roundToInt().coerceIn(0, croppedBitmap.width - 1)
+    val safeTop = sourceCropRect.top.roundToInt().coerceIn(0, croppedBitmap.height - 1)
+    val safeRight = sourceCropRect.right.roundToInt().coerceIn(safeLeft + 1, croppedBitmap.width)
+    val safeBottom = sourceCropRect.bottom.roundToInt().coerceIn(safeTop + 1, croppedBitmap.height)
+    val safeCropWidth = max(1, safeRight - safeLeft)
+    val safeCropHeight = max(1, safeBottom - safeTop)
+
+    val croppedForTarget = runCatching {
+        Bitmap.createBitmap(croppedBitmap, safeLeft, safeTop, safeCropWidth, safeCropHeight)
+    }.getOrNull() ?: croppedBitmap
+
     val outputBitmap = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
     val canvas = AndroidCanvas(outputBitmap)
     val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
-
-    val scale = min(
-        targetWidth.toFloat() / croppedBitmap.width.toFloat(),
-        targetHeight.toFloat() / croppedBitmap.height.toFloat()
-    )
-
-    val drawWidth = croppedBitmap.width * scale
-    val drawHeight = croppedBitmap.height * scale
-
-    val drawLeft = when (exportSettings.horizontalAlignment) {
-        HorizontalAlignment.START -> 0f
-        HorizontalAlignment.CENTER -> (targetWidth - drawWidth) / 2f
-        HorizontalAlignment.END -> targetWidth - drawWidth
-    }
-
-    val drawTop = when (exportSettings.verticalAlignment) {
-        VerticalAlignment.TOP -> 0f
-        VerticalAlignment.CENTER -> (targetHeight - drawHeight) / 2f
-        VerticalAlignment.BOTTOM -> targetHeight - drawHeight
-    }
-
-    val destination = RectF(
-        drawLeft,
-        drawTop,
-        drawLeft + drawWidth,
-        drawTop + drawHeight
-    )
-
-    canvas.drawBitmap(croppedBitmap, null, destination, paint)
+    val destination = RectF(0f, 0f, targetWidth.toFloat(), targetHeight.toFloat())
+    canvas.drawBitmap(croppedForTarget, null, destination, paint)
     return outputBitmap
+}
+
+private fun alignedOffset(
+    containerSize: Float,
+    contentSize: Float,
+    alignment: HorizontalAlignment
+): Float {
+    return when (alignment) {
+        HorizontalAlignment.START -> 0f
+        HorizontalAlignment.CENTER -> (containerSize - contentSize) / 2f
+        HorizontalAlignment.END -> containerSize - contentSize
+    }.coerceIn(0f, max(0f, containerSize - contentSize))
+}
+
+private fun alignedOffset(
+    containerSize: Float,
+    contentSize: Float,
+    alignment: VerticalAlignment
+): Float {
+    return when (alignment) {
+        VerticalAlignment.TOP -> 0f
+        VerticalAlignment.CENTER -> (containerSize - contentSize) / 2f
+        VerticalAlignment.BOTTOM -> containerSize - contentSize
+    }.coerceIn(0f, max(0f, containerSize - contentSize))
 }
 
 private fun saveToCacheAndGetUri(context: Context, bitmap: Bitmap): Uri? {
