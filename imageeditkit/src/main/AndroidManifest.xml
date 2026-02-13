@@ -8,7 +8,7 @@
             android:theme="@style/Theme.AndroidImageEditKit" />
 
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name="org.endlessai.androidimageeditkit.ImageEditKitFileProvider"
             android:authorities="${applicationId}.androidimageeditkit.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
