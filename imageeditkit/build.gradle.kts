@@ -1,11 +1,22 @@
+import org.gradle.api.publish.maven.MavenPublication
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("maven-publish")
+    id("signing")
 }
 
 group = (findProperty("GROUP") as? String) ?: "org.endlessai.androidimageeditkit"
 version = (findProperty("VERSION_NAME") as? String) ?: "0.1.0"
+
+fun prop(name: String, default: String): String {
+    return (findProperty(name) as? String)
+        ?.takeIf { it.isNotBlank() }
+        ?: default
+}
+
+val pomArtifactId = prop("POM_ARTIFACT_ID", "imageeditkit")
 
 android {
     namespace = "org.endlessai.androidimageeditkit"
@@ -52,39 +63,87 @@ android {
     publishing {
         singleVariant("release") {
             withSourcesJar()
+            withJavadocJar()
         }
     }
 }
 
-publishing {
-    publications {
-        create("release", org.gradle.api.publish.maven.MavenPublication::class) {
-            groupId = project.group.toString()
-            artifactId = "imageeditkit"
-            version = project.version.toString()
-            afterEvaluate {
-                from(components["release"])
-            }
-        }
-    }
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            val githubRepository = (findProperty("GITHUB_REPOSITORY") as? String)
-                ?: System.getenv("GITHUB_REPOSITORY")
-                ?: "chenlidongorg/AndroidImageEditKit"
-            url = uri("https://maven.pkg.github.com/$githubRepository")
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                groupId = project.group.toString()
+                artifactId = pomArtifactId
+                version = project.version.toString()
 
-            credentials {
-                username = (findProperty("GITHUB_PACKAGES_USER") as? String)
-                    ?: System.getenv("GITHUB_ACTOR")
-                    ?: System.getenv("GITHUB_USERNAME")
-                password = (findProperty("GITHUB_PACKAGES_TOKEN") as? String)
-                    ?: System.getenv("GITHUB_TOKEN")
-                    ?: System.getenv("GITHUB_PAT")
+                from(components["release"])
+
+                pom {
+                    name.set(prop("POM_NAME", "AndroidImageEditKit"))
+                    description.set(
+                        prop(
+                            "POM_DESCRIPTION",
+                            "Android image edit kit for external image crop and precise export workflows."
+                        )
+                    )
+                    url.set(prop("POM_URL", "https://github.com/chenlidongorg/AndroidImageEditKit"))
+
+                    licenses {
+                        license {
+                            name.set(prop("POM_LICENSE_NAME", "The Apache License, Version 2.0"))
+                            url.set(
+                                prop(
+                                    "POM_LICENSE_URL",
+                                    "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                                )
+                            )
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id.set(prop("POM_DEVELOPER_ID", "endlessai"))
+                            name.set(prop("POM_DEVELOPER_NAME", "EndlessAI"))
+                            email.set(prop("POM_DEVELOPER_EMAIL", "opensource@endlessai.org"))
+                        }
+                    }
+
+                    scm {
+                        connection.set(
+                            prop(
+                                "POM_SCM_CONNECTION",
+                                "scm:git:git://github.com/chenlidongorg/AndroidImageEditKit.git"
+                            )
+                        )
+                        developerConnection.set(
+                            prop(
+                                "POM_SCM_DEV_CONNECTION",
+                                "scm:git:ssh://git@github.com/chenlidongorg/AndroidImageEditKit.git"
+                            )
+                        )
+                        url.set(prop("POM_SCM_URL", "https://github.com/chenlidongorg/AndroidImageEditKit"))
+                    }
+                }
             }
         }
     }
+}
+
+signing {
+    val shouldSignForCentral = gradle.startParameter.taskNames.any { taskName ->
+        taskName.contains("Sonatype", ignoreCase = true)
+    }
+    setRequired { shouldSignForCentral }
+
+    val signingKey = (findProperty("SIGNING_KEY") as? String)
+        ?: System.getenv("SIGNING_KEY")
+    val signingPassword = (findProperty("SIGNING_PASSWORD") as? String)
+        ?: System.getenv("SIGNING_PASSWORD")
+
+    if (!signingKey.isNullOrBlank()) {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    }
+    sign(publishing.publications)
 }
 
 dependencies {

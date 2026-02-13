@@ -21,7 +21,7 @@ Android 图片编辑库（裁剪场景），支持：
 ./gradlew :imageeditkit:assembleDebug
 ```
 
-## 发布包（GitHub Packages）
+## 发布包（Maven Central）
 
 本库默认 Maven 坐标：
 
@@ -32,7 +32,7 @@ Android 图片编辑库（裁剪场景），支持：
 
 1. 提交并 push 代码到仓库
 2. 创建并 push tag（例如 `v0.1.1`）
-3. GitHub Actions 会自动执行 `.github/workflows/publish.yml`，发布到 GitHub Packages
+3. GitHub Actions 会自动执行 `.github/workflows/publish.yml`，发布到 Maven Central
 
 ```bash
 git tag v0.1.1
@@ -45,14 +45,30 @@ git push origin v0.1.1
 implementation("org.endlessai.androidimageeditkit:imageeditkit:0.1.1")
 ```
 
-说明：
+发布前需要在 GitHub 仓库配置这些 secrets：
 
-- 代码包名与 Maven 坐标统一为 `org.endlessai.androidimageeditkit`。
-- 若需要本地手动发布，可执行：
+- `SONATYPE_USERNAME`
+- `SONATYPE_PASSWORD`
+- `SIGNING_KEY`（ASCII armored 私钥文本）
+- `SIGNING_PASSWORD`
+
+首次发布前，请先在 Sonatype 完成 namespace 与 profile 配置：
+
+1. 在 Central 绑定并验证 `org.endlessai.androidimageeditkit` 命名空间
+2. 在 Central 生成并保存 User Token（即 `SONATYPE_USERNAME` / `SONATYPE_PASSWORD`）
+
+若需要本地手动发布，可执行：
 
 ```bash
-./gradlew :imageeditkit:publishReleasePublicationToGitHubPackagesRepository
+./gradlew \
+  publishToSonatype \
+  closeAndReleaseSonatypeStagingRepository
 ```
+
+白板或其他客户端只需要：
+
+1. `settings.gradle.kts` 使用 `mavenCentral()`
+2. `build.gradle.kts` 依赖版本号更新到新发布版本
 
 ## 对外 API
 
