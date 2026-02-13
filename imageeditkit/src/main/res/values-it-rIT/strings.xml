@@ -4,8 +4,8 @@
     <string name="image_edit_toast_export_file_cancelled">Esportazione su file annullata</string>
     <string name="image_edit_toast_export_file_success">Esportato su file</string>
     <string name="image_edit_toast_export_file_failed">Esportazione del file non riuscita</string>
-    <string name="image_edit_toast_load_failed">Impossibile caricare l'immagine, seleziona nuovamente</string>
-    <string name="image_edit_toast_add_image_first">Per favore aggiungi prima un'immagine</string>
+    <string name="image_edit_toast_load_failed">Impossibile caricare l\\'immagine, seleziona nuovamente</string>
+    <string name="image_edit_toast_add_image_first">Per favore aggiungi prima un\\'immagine</string>
     <string name="image_edit_toast_export_failed">Esportazione non riuscita</string>
     <string name="image_edit_toast_save_gallery_failed">Salvataggio non riuscito, controlla i permessi della gallery</string>
     <string name="image_edit_toast_saved_gallery_success">Salvato nella galleria</string>
@@ -22,12 +22,12 @@
     <string name="image_edit_import_from_folder">Importa dalla cartella</string>
     <string name="image_edit_action_cancel">Annulla</string>
     <string name="image_edit_workspace_loading">Caricamento immagine...</string>
-    <string name="image_edit_workspace_empty">Nessuna immagine nell'area di lavoro, tocca per aggiungerne una</string>
+    <string name="image_edit_workspace_empty">Nessuna immagine nell\\'area di lavoro, tocca per aggiungerne una</string>
     <string name="image_edit_dialog_precise_export">Esportazione precisa</string>
     <string name="image_edit_label_width">Larghezza</string>
     <string name="image_edit_label_height">Altezza</string>
     <string name="image_edit_label_alignment">Allineamento</string>
-    <string name="image_edit_label_export_destination">Destinazione dell'esportazione</string>
+    <string name="image_edit_label_export_destination">Destinazione dell\\'esportazione</string>
     <string name="image_edit_destination_gallery">Galleria</string>
     <string name="image_edit_destination_folder">Cartella</string>
     <string name="image_edit_action_confirm_export">Esportazione</string>
