@@ -6,10 +6,13 @@ plugins {
 
 group = (findProperty("GROUP") as? String) ?: "org.endlessai.androidimageeditkit"
 version = (findProperty("VERSION_NAME") as? String) ?: "0.1.0"
+val sonatypePackageGroup = (findProperty("SONATYPE_PACKAGE_GROUP") as? String)
+    ?: group.toString()
 
 nexusPublishing {
     repositories {
         sonatype {
+            packageGroup.set(sonatypePackageGroup)
             nexusUrl.set(
                 uri(
                     (findProperty("SONATYPE_NEXUS_URL") as? String)
